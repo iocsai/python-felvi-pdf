@@ -11,7 +11,7 @@ from logging.handlers import TimedRotatingFileHandler
 import tabula
 import xlsxwriter
 
-_VERSION = "0.0.1"
+_VERSION = "0.1.0"
 FORMATTER = logging.Formatter("%(asctime)s %(levelname)s [%(name)s] [%(message)s]")
 IN_FOLDER = "in"
 NICKNAMES = ("kiscsillag", "littlestar")

@@ -1,5 +1,10 @@
 # Felvi PDF Processor
 
+## Version: [0.1.0](https://github.com/iocsai/python-felvi-pdf/commit/7f0d23e4abec960ad7e0f9cc1911b6170bb4c0c8)
+*2021-02-21*
+* Processing updated for Csokonai
+* Processing implemented for Medgyessy
+
 ## Version: [0.0.1](https://github.com/iocsai/python-felvi-pdf/commit/989efefac9412bd89217f1e6f6c16b7533f204e9)
 *2021-02-07*
 * PDF tables processing implemented
