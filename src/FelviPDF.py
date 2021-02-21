@@ -79,7 +79,7 @@ class Processing:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:
-                if line_count != 0 and OM_ID_PATTERN.match(row[0]) or row[0] in NICKNAMES:
+                if line_count != 0 and len(row[2]) != 0 and OM_ID_PATTERN.match(row[0]) or row[0] in NICKNAMES:
                     logger.info(f"{row[0]} -> {row[2]}")
                     raw_data[row[0]] = float(row[2].replace(',', '.')) if row[2].__contains__(',') else 0
                 line_count += 1
