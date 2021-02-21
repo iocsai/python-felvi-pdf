@@ -63,9 +63,25 @@ class Processing:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:
-                if line_count != 0 and row[1].isdigit() and OM_ID_PATTERN.match(row[0]) or row[0] in NICKNAMES:
+                if line_count != 0 and OM_ID_PATTERN.match(row[0]) or row[0] in NICKNAMES:
                     logger.info(f"{row[0]} -> {row[1]}")
                     raw_data[row[0]] = float(row[1].replace(',', '.'))
+                line_count += 1
+        self.student_dict = OrderedDict(
+            {k: v for k, v in sorted(raw_data.items(), key=lambda item: item[1], reverse=True)})
+        self.key_to_pos = {k: pos for pos, k in enumerate(self.student_dict)}
+        logger.info(f'Processed {line_count} lines.')
+
+    def process_medgyessy(self):
+        raw_data = dict()
+        with open(self.csv_file, 'r') as csv_file:
+            logger.info(f"Processing {self.school_name}.{self.class_type}")
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            line_count = 0
+            for row in csv_reader:
+                if line_count != 0 and OM_ID_PATTERN.match(row[0]) or row[0] in NICKNAMES:
+                    logger.info(f"{row[0]} -> {row[2]}")
+                    raw_data[row[0]] = float(row[2].replace(',', '.')) if row[2].__contains__(',') else 0
                 line_count += 1
         self.student_dict = OrderedDict(
             {k: v for k, v in sorted(raw_data.items(), key=lambda item: item[1], reverse=True)})
