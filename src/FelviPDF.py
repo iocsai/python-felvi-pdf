@@ -57,31 +57,22 @@ class Processing:
         pass
 
     def process_csokonai(self):
-        raw_data = dict()
-        with open(self.csv_file, 'r') as csv_file:
-            logger.info(f"Processing {self.school_name}.{self.class_type}")
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            line_count = 0
-            for row in csv_reader:
-                if line_count != 0 and OM_ID_PATTERN.match(row[0]) or row[0] in NICKNAMES:
-                    logger.info(f"{row[0]} -> {row[1]}")
-                    raw_data[row[0]] = float(row[1].replace(',', '.'))
-                line_count += 1
-        self.student_dict = OrderedDict(
-            {k: v for k, v in sorted(raw_data.items(), key=lambda item: item[1], reverse=True)})
-        self.key_to_pos = {k: pos for pos, k in enumerate(self.student_dict)}
-        logger.info(f'Processed {line_count} lines.')
+        self.process_csv()
 
     def process_medgyessy(self):
+        self.process_csv(col_pts=2)
+
+    def process_csv(self, col_om_id=0, col_pts=1):
         raw_data = dict()
+        line_count = 0
         with open(self.csv_file, 'r') as csv_file:
             logger.info(f"Processing {self.school_name}.{self.class_type}")
             csv_reader = csv.reader(csv_file, delimiter=',')
-            line_count = 0
             for row in csv_reader:
-                if line_count != 0 and len(row[2]) != 0 and OM_ID_PATTERN.match(row[0]) or row[0] in NICKNAMES:
-                    logger.info(f"{row[0]} -> {row[2]}")
-                    raw_data[row[0]] = float(row[2].replace(',', '.')) if row[2].__contains__(',') else 0
+                if line_count != 0 and len(row[col_pts]) != 0 and (
+                        OM_ID_PATTERN.match(row[col_om_id]) or row[col_om_id] in NICKNAMES):
+                    logger.info(f"{row[col_om_id]} -> {row[col_pts]}")
+                    raw_data[row[col_om_id]] = float(row[col_pts].replace(',', '.'))
                 line_count += 1
         self.student_dict = OrderedDict(
             {k: v for k, v in sorted(raw_data.items(), key=lambda item: item[1], reverse=True)})
