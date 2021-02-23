@@ -38,7 +38,7 @@ class PDFConverter:
 
 
 class Processing:
-    _SCHOOLS = ("Fazekas", "Kossuth", "Csokonai", "Ady", "Medgyessy", "Mechwart", "Vegyipari", "TAG")
+    _SCHOOLS = ("Ady", "Csokonai", "Doczy", "Fazekas", "Kossuth", "Mechwart", "Medgyessy", "Refi", "TAG", "Vegyipari")
 
     key_to_pos = dict()
     student_dict = dict()
@@ -71,7 +71,7 @@ class Processing:
             for row in csv_reader:
                 if line_count != 0 and len(row[col_pts]) != 0 and (
                         OM_ID_PATTERN.match(row[col_om_id]) or row[col_om_id] in NICKNAMES):
-                    logger.info(f"{row[col_om_id]} -> {row[col_pts]}")
+                    logger.info(f"{row[col_om_id]}{SEPARATOR}{row[col_pts]}")
                     raw_data[row[col_om_id]] = float(row[col_pts].replace(',', '.'))
                 line_count += 1
         self.student_dict = OrderedDict(
@@ -136,9 +136,11 @@ if __name__ == '__main__':
     logger = get_logger("Felvi-PDF-processor")
     startup()
     schools = list()
+    students = set()
     for in_file in os.listdir(IN_FOLDER):
         logger.info(f"Source found: {in_file}")
         schools.append(Processing(in_file))
+    # TODO create summary of student's results temporary in json format -> xlsx
     XlsxExport("test", schools)
     PDFConverter.cleanup()
     pass
