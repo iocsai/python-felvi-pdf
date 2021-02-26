@@ -12,6 +12,7 @@ import tabula
 import xlsxwriter
 
 _VERSION = "0.1.0"
+_DEV_MODE = True
 FORMATTER = logging.Formatter("%(asctime)s %(levelname)s [%(name)s] [%(message)s]")
 IN_FOLDER = "in"
 NICKNAMES = ("kiscsillag", "littlestar")
@@ -142,5 +143,6 @@ if __name__ == '__main__':
         schools.append(Processing(in_file))
     # TODO create summary of student's results temporary in json format -> xlsx
     XlsxExport("test", schools)
-    PDFConverter.cleanup()
+    if not _DEV_MODE:
+        PDFConverter.cleanup()
     pass
