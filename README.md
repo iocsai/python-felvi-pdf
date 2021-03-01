@@ -4,6 +4,7 @@
 *2021-02-21*
 * Processing updated for Csokonai
 * Processing implemented for Medgyessy
+* Processing implemented for TAG
 
 ## Version: [0.0.1](https://github.com/iocsai/python-felvi-pdf/commit/989efefac9412bd89217f1e6f6c16b7533f204e9)
 *2021-02-07*

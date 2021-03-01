@@ -10,12 +10,15 @@ from logging.handlers import TimedRotatingFileHandler
 
 import tabula
 import xlsxwriter
+from Nicknames import NICKNAMES
 
-_VERSION = "0.1.0"
+
+__VERSION__ = "0.1.0"
+
+
 _DEV_MODE = True
 FORMATTER = logging.Formatter("%(asctime)s %(levelname)s [%(name)s] [%(message)s]")
 IN_FOLDER = "in"
-NICKNAMES = ("kiscsillag", "littlestar")
 LOG_FOLDER = "logs"
 LOG_FILE = os.path.join(LOG_FOLDER, f"output-{datetime.today().strftime('%Y-%m-%d')}.log")
 OM_ID_PATTERN = re.compile(r"\d{11}")
@@ -31,7 +34,8 @@ class PDFConverter:
         if not os.path.exists(TEMP_FOLDER):
             os.mkdir(TEMP_FOLDER)
         self.csv_file = os.path.join(TEMP_FOLDER, ".".join([school_name, class_type, "csv"]))
-        tabula.convert_into(path, self.csv_file, pages=pages, password=password)
+        if school_name != "TAG":
+            tabula.convert_into(path, self.csv_file, pages=pages, password=password)
 
     @staticmethod
     def cleanup():
@@ -39,7 +43,7 @@ class PDFConverter:
 
 
 class Processing:
-    _SCHOOLS = ("Ady", "Csokonai", "Doczy", "Fazekas", "Kossuth", "Mechwart", "Medgyessy", "Refi", "TAG", "Vegyipari")
+    _SCHOOLS = ("Ady", "Csokonai", "Doczy", "Fazekas", "Kossuth", "Mechwart", "Medgyessy", "Refi", "Tag", "Vegyipari")
 
     key_to_pos = dict()
     student_dict = dict()
@@ -62,6 +66,9 @@ class Processing:
 
     def process_medgyessy(self):
         self.process_csv(col_pts=2)
+
+    def process_TAG(self):
+        self.process_csv(col_om_id=1, col_pts=3)
 
     def process_csv(self, col_om_id=0, col_pts=1):
         raw_data = dict()
