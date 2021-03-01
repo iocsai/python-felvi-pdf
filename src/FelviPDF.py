@@ -31,8 +31,6 @@ XLSX_NAME = ""
 class PDFConverter:
 
     def __init__(self, path, school_name, class_type, pages="all", password=""):
-        if not os.path.exists(TEMP_FOLDER):
-            os.mkdir(TEMP_FOLDER)
         self.csv_file = os.path.join(TEMP_FOLDER, ".".join([school_name, class_type, "csv"]))
         if school_name != "TAG":
             tabula.convert_into(path, self.csv_file, pages=pages, password=password)
@@ -50,8 +48,10 @@ class Processing:
 
     def __init__(self, source):
         s = source.split(".")
+        if s[-1] == "csv":
+            shutil.copy2(os.path.join(IN_FOLDER, source), TEMP_FOLDER)
         if s[0].capitalize() in self._SCHOOLS:
-            temp = PDFConverter(os.path.join(IN_FOLDER, in_file), s[0], s[1])
+            temp = PDFConverter(os.path.join(IN_FOLDER, source), s[0], s[1])
             self.school_name = s[0]
             self.class_type = s[1]
             self.csv_file = temp.csv_file
@@ -138,6 +138,8 @@ def startup():
         os.mkdir(OUT_FOLDER)
     if not os.path.exists(LOG_FOLDER):
         os.mkdir(LOG_FOLDER)
+    if not os.path.exists(TEMP_FOLDER):
+        os.mkdir(TEMP_FOLDER)
 
 
 if __name__ == '__main__':
