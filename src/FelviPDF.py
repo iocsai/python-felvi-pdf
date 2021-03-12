@@ -10,10 +10,11 @@ from logging.handlers import TimedRotatingFileHandler
 
 import tabula
 import xlsxwriter
+import pandas as pd
 from Nicknames import NICKNAMES
 
 
-__VERSION__ = "0.1.0"
+__VERSION__ = "0.2.0"
 
 
 _DEV_MODE = True
@@ -32,7 +33,12 @@ class PDFConverter:
 
     def __init__(self, path, school_name, class_type, pages="all", password=""):
         self.csv_file = os.path.join(TEMP_FOLDER, ".".join([school_name, class_type, "csv"]))
-        if school_name != "TAG":
+        if school_name == "ady":
+            df = pd.read_excel(os.path.join(IN_FOLDER, ".".join([school_name, class_type, "xlsx"])))
+            df.to_csv(self.csv_file, sep=",")
+        elif school_name == "kossuth":
+            tabula.convert_into(path, self.csv_file, pages=pages, password=password, lattice=True)
+        elif school_name != "TAG":
             tabula.convert_into(path, self.csv_file, pages=pages, password=password)
 
     @staticmethod
@@ -65,10 +71,19 @@ class Processing:
         self.process_csv()
 
     def process_medgyessy(self):
-        self.process_csv(col_pts=2)
+        self.process_csv(col_om_id=1, col_pts=2)
 
     def process_TAG(self):
         self.process_csv(col_om_id=1, col_pts=3)
+
+    def process_kossuth(self):
+        self.process_csv(col_om_id=1, col_pts=2)
+
+    def process_fazekas(self):
+        self.process_csv()
+
+    def process_ady(self):
+        self.process_csv(col_om_id=2, col_pts=3)
 
     def process_csv(self, col_om_id=0, col_pts=1):
         raw_data = dict()
@@ -77,10 +92,14 @@ class Processing:
             logger.info(f"Processing {self.school_name}.{self.class_type}")
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
-                if line_count != 0 and len(row[col_pts]) != 0 and (
-                        OM_ID_PATTERN.match(row[col_om_id]) or row[col_om_id] in NICKNAMES):
-                    logger.info(f"{row[col_om_id]}{SEPARATOR}{row[col_pts]}")
-                    raw_data[row[col_om_id]] = float(row[col_pts].replace(',', '.'))
+                try:
+                    if line_count != 0 and len(row[col_pts]) != 0 and (
+                            OM_ID_PATTERN.match(row[col_om_id]) or row[col_om_id] in NICKNAMES):
+                        raw_data[row[col_om_id]] = float(row[col_pts].replace(',', '.'))
+                        logger.info(f"{row[col_om_id]}{SEPARATOR}{row[col_pts]}")
+                except IndexError:
+                    raw_data[row[col_om_id]] = "E"
+                    logger.info(f"{row[col_om_id]}{SEPARATOR}E")
                 line_count += 1
         self.student_dict = OrderedDict(
             {k: v for k, v in sorted(raw_data.items(), key=lambda item: item[1], reverse=True)})
