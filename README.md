@@ -1,6 +1,6 @@
 # Felvi PDF Processor
 
-## Version: 0.2.0
+## Version: [0.2.0](https://github.com/iocsai/python-felvi-pdf/commit/97082a3eb5cd5c37068139c0ffbd06a049430da8)
 *2010-03-12*
 * Processing implemented for TAG
 * Processing implemented for Kossuth
